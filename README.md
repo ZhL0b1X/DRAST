@@ -1,6 +1,6 @@
 # DNS_resolver
 
-The purpose of this program is to collect recordsfor domains that are stored in the DNS server.
+The purpose of this program is to collect records for domains that are stored in the DNS server.
 
 The program is currently under development and will have more flexible and convenient functionality in the future.
 

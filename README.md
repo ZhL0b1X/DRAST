@@ -75,7 +75,7 @@ cd Output
 ```
 # Advice for Advanced
 For more advanced interaction with the data, you can go to the "lib" directory<br /> 
-and edit the "Domaininfo.py"file by commenting out line 248 and adding the "types" variable to the "return" statement
+and edit the "Domaininfo.py" file by commenting out line 248 and adding the "types" variable to the "return" statement
 
 From this:
 ```python

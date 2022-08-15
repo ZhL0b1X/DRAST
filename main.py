@@ -29,7 +29,7 @@ if __name__ == "__main__":
 	for url in Domians_file:
 		url = url.strip()	
 		domain_object = DomainInfo(url, Default_DNS)
-		json_data = domain_object.JSON_generator()
+		json_data = domain_object.JSON_generator(json_format=True)
 		os.makedirs("Output", exist_ok=True)
 		file = open(os.path.join("Output", Date + ".txt"), "a")
 		file.write(str(json_data))

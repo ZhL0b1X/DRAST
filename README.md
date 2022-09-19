@@ -1,4 +1,6 @@
 # DNS_resolver
+<img width="513" src="https://user-images.githubusercontent.com/85976942/191089269-0918c8c1-db83-4f67-bfcb-7218697960d6.png">
+
 
 The purpose of this program is to collect records data for domains that are stored in the DNS server.
 
@@ -41,8 +43,7 @@ pip3 install -r requirements.txt
 
 # Usage
 
-### At the moment, the program can only collect data from a bulk list. 
-#### In the future, a function for a single domain will be added.
+### At the moment, the program can only collect data from a bulk list, as well as a single domain. 
 To add and edit a bulk list with domains, you need to go into the "Domain_list" directory by entering the following command in the terminal:
 ```
 cd Domain_list

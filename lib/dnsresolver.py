@@ -245,7 +245,7 @@ class domaininfo(object):
 				  	 "data": ""}
 		types = A, AAAA, MX, TXT, CNAME, NS, SOA
 		if json_format == False:
-			return dict(types)
+			return types
 		else:
 			json_object = json.dumps(types, indent = 10)	
 			return json_object

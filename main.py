@@ -1,6 +1,5 @@
 import time 
-import os
-import sys
+import os, sys
 import animation
 import dns.resolver
 from datetime import datetime

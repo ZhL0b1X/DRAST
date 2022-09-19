@@ -23,14 +23,18 @@ if __name__ == "__main__":
 		symbol_yellow = colored("[!]", "yellow")
 		pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
 		main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Exit"])]
+		format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
 		wait          = animation.Wait(color="green", speed=0.1)
 		file          = makefile()
 		cursor.hide()
-		main_answer   = inquirer.prompt(main_menu)
-		cursor.show()
+		main_answer   = inquirer.prompt(main_menu)  
 		os.system('cls' if os.name == 'nt' else 'clear')
 		if str(main_answer) == "{'main': 'Exit'}":
 			sys.exit()
+		os.system('cls' if os.name == 'nt' else 'clear')
+		format_answer = inquirer.prompt(format_menu)
+		cursor.show()
+		os.system('cls' if os.name == 'nt' else 'clear')
 		while True:
 			try:
 				dns_ip    = dns.resolver.Resolver()
@@ -41,11 +45,11 @@ if __name__ == "__main__":
 				else:
 					dns_ip.nameservers = input_dns
 			except ValueError:
-				print("\n\n\n" + symbol_red + " Invalid DNS ip " + symbol_red + "\n" +
-					  symbol_red + "Please try again" + symbol_red)
-				time.sleep(2)
-				os.system('cls' if os.name == 'nt' else 'clear')
-				continue
+					print("\n\n\n" + symbol_red + " Invalid DNS ip " + symbol_red + "\n" +
+					symbol_red + "Please try again" + symbol_red)
+					time.sleep(2)
+					os.system('cls' if os.name == 'nt' else 'clear')
+					continue
 			break
 		if str(main_answer) == "{'main': 'Single domain resolve'}":
 			while True:
@@ -62,17 +66,23 @@ if __name__ == "__main__":
 			os.system('cls' if os.name == 'nt' else 'clear')
 			cursor.hide()
 			wait.start()
-			file.single(domain, dns_ip)
+			if str(format_answer) == "{'format': 'Json'}":
+				file.single(domain, dns_ip, json=True)
+			elif str(format_answer) == "{'format': 'Dictionary'}":
+				file.single(domain, dns_ip, json=False)
 		elif str(main_answer) == "{'main': 'Bulk resolve'}":
 			cursor.hide()
 			print(symbol_yellow + " Be sure that you edit domain_list.txt " + symbol_yellow)
 			wait.start()
-			file.bulk(dns_ip)
+			if str(format_answer) == "{'format': 'Json'}":
+				file.bulk(dns_ip, json=True)
+			elif str(format_answer) == "{'format': 'Dictionary'}":
+				file.bulk(dns_ip, json=False)
 		os.system('cls' if os.name == 'nt' else 'clear')
 		wait.stop()
 		print("Data saved")
 		time.sleep(1.5)
-		os.system('cls' if os.name == 'nt' else 'clear')	
+		os.system('cls' if os.name == 'nt' else 'clear')    
 
 
 

@@ -1,47 +1,78 @@
+import re
 import time 
-import os
-import sys
+import cursor
+import inquirer
+import os, sys
 import animation
 import dns.resolver
+import pyfiglet as pf
 from datetime import datetime
-from lib.DomainInfo import DomainInfo
+from termcolor import colored
+from lib.resolvetype import makefile
+
 
 
 
 if __name__ == "__main__":
-	Date         = datetime.now().strftime('%Y-%m-%d|%H:%M:%S')
-	Domians_file = open(os.path.join("Domain_list", "dns_domains.txt"))
 	while True:
-		try:
-			Default_DNS  = dns.resolver.Resolver()
-			Input_DNS    = [input('Enter DNS ip or press "Enter" to use the default IP:  ')] 
-			if Input_DNS == [""]:
-				Default_DNS
-			else:
-				Default_DNS.nameservers = Input_DNS
-		except ValueError:
-			print("Invalid DNS ip.\n"
-				  "Please try again")
-			continue
-		break
-	os.system('cls' if os.name == 'nt' else 'clear')
-	wait_animation = animation.Wait(color="green", speed=0.8)
-	wait_animation.start()
-	for url in Domians_file:
-		url = url.strip()	
-		domain_object = DomainInfo(url, Default_DNS)
-		json_data = domain_object.JSON_generator(json_format=True)
-		os.makedirs("Output", exist_ok=True)
-		file = open(os.path.join("Output", Date + ".txt"), "a")
-		file.write(str(json_data))
-		file.close()
-	wait_animation.stop()
-	print("Data saved")
-	time.sleep(1.5)
-	os.system('cls' if os.name == 'nt' else 'clear')	
-
-
-
+		os.system('cls' if os.name == 'nt' else 'clear')
+		logo_text     = pf.figlet_format("DNS resolver", font='slant')
+		logo          = colored(logo_text, 'blue')
+		print(logo)
+		symbol_red    = colored("[!]", "red")
+		symbol_yellow = colored("[!]", "yellow")
+		pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
+		main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Exit"])]
+		wait          = animation.Wait(color="green", speed=0.1)
+		file          = makefile()
+		cursor.hide()
+		main_answer   = inquirer.prompt(main_menu)
+		cursor.show()
+		os.system('cls' if os.name == 'nt' else 'clear')
+		if str(main_answer) == "{'main': 'Exit'}":
+			sys.exit()
+		while True:
+			try:
+				dns_ip    = dns.resolver.Resolver()
+				input_dns = [input('Enter DNS IP or press "Enter" to use the default IP: ')]
+				os.system('cls' if os.name == 'nt' else 'clear')
+				if input_dns == [""]:
+					dns_ip
+				else:
+					dns_ip.nameservers = input_dns
+			except ValueError:
+				print("\n\n\n" + symbol_red + " Invalid DNS ip " + symbol_red + "\n" +
+					  symbol_red + "Please try again" + symbol_red)
+				time.sleep(2)
+				os.system('cls' if os.name == 'nt' else 'clear')
+				continue
+			break
+		if str(main_answer) == "{'main': 'Single domain resolve'}":
+			while True:
+				print("Please write domain in next format: \n\n1: example.com \n\n2: www.example.com\n")
+				domain = input("Please type domain: ")
+				match  = re.search(pattern, domain)
+				if match:
+					break
+				else:
+					print("\n\n\n" + symbol_red + " Domain is not valid. Please try again! " + symbol_red)
+					time.sleep(2)
+					os.system('cls' if os.name == 'nt' else 'clear')
+					continue
+			os.system('cls' if os.name == 'nt' else 'clear')
+			cursor.hide()
+			wait.start()
+			file.single(domain, dns_ip)
+		elif str(main_answer) == "{'main': 'Bulk resolve'}":
+			cursor.hide()
+			print(symbol_yellow + " Be sure that you edit domain_list.txt " + symbol_yellow)
+			wait.start()
+			file.bulk(dns_ip)
+		os.system('cls' if os.name == 'nt' else 'clear')
+		wait.stop()
+		print("Data saved")
+		time.sleep(1.5)
+		os.system('cls' if os.name == 'nt' else 'clear')	
 
 
 

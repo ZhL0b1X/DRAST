@@ -17,12 +17,33 @@ class makefile(object):
 	def single(self, url, dns, json=True):
 		domain_object  = domaininfo(url, dns)
 		if json == False:
-			json_data = domain_object.json_generator(json_format=False)
+			resolveA = domain_object.resolveA(json_format=False)
+			resolverAAAA = domain_object.resolverAAAA(json_format=False)
+			resolveMX = domain_object.resolveMX(json_format=False)
+			resolveTXT = domain_object.resolveTXT(json_format=False)
+			resolveCNAME = domain_object.resolveCNAME(json_format=False)
+			resolveNS = domain_object.resolveNS(json_format=False)
+			resolveSOA = domain_object.resolveSOA(json_format=False)
+
 		else:
-			json_data = domain_object.json_generator(json_format=True)
+			resolveA = domain_object.resolveA(json_format=True)
+			resolverAAAA = domain_object.resolverAAAA(json_format=True)
+			resolveMX = domain_object.resolveMX(json_format=True)
+			resolveTXT = domain_object.resolveTXT(json_format=True)
+			resolveCNAME = domain_object.resolveCNAME(json_format=True)
+			resolveNS = domain_object.resolveNS(json_format=True)
+			resolveSOA = domain_object.resolveSOA(json_format=True)
 		os.makedirs("Output", exist_ok=True)
 		file = open(os.path.join("Output", self.date + ".txt"), "a")
-		file.write(str(json_data))
+		file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
+													str(resolveA), 
+													str(resolverAAAA),
+													str(resolveMX), 
+													str(resolveTXT), 
+													str(resolveCNAME), 
+													str(resolveNS), 
+													str(resolveSOA))
+													)
 		file.close()
 
 
@@ -31,11 +52,32 @@ class makefile(object):
 			url = url.strip()	
 			domain_object = domaininfo(url, dns)
 			if json == False:
-				json_data = domain_object.json_generator(json_format=False)
+				resolveA = domain_object.resolveA(json_format=False)
+				resolverAAAA = domain_object.resolverAAAA(json_format=False)
+				resolveMX = domain_object.resolveMX(json_format=False)
+				resolveTXT = domain_object.resolveTXT(json_format=False)
+				resolveCNAME = domain_object.resolveCNAME(json_format=False)
+				resolveNS = domain_object.resolveNS(json_format=False)
+				resolveSOA = domain_object.resolveSOA(json_format=False)
 			else:
-				json_data = domain_object.json_generator(json_format=True)
+				resolveA = domain_object.resolveA(json_format=True)
+				resolverAAAA = domain_object.resolverAAAA(json_format=True)
+				resolveMX = domain_object.resolveMX(json_format=True)
+				resolveTXT = domain_object.resolveTXT(json_format=True)
+				resolveCNAME = domain_object.resolveCNAME(json_format=True)
+				resolveNS = domain_object.resolveNS(json_format=True)
+				resolveSOA = domain_object.resolveSOA(json_format=True)
 			os.makedirs("Output", exist_ok=True)
 			file = open(os.path.join("Output", self.date + ".txt"), "a")
-			file.write(str(json_data))
+			file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
+														str(resolveA), 
+														str(resolverAAAA),
+														str(resolveMX), 
+														str(resolveTXT), 
+														str(resolveCNAME), 
+														str(resolveNS), 
+														str(resolveSOA))
+														)
 			file.close()
+
 

@@ -1,6 +1,7 @@
-# DNS_resolver
+
 <img width="513" src="https://user-images.githubusercontent.com/85976942/191089269-0918c8c1-db83-4f67-bfcb-7218697960d6.png">
 
+___
 
 The purpose of this program is to collect records data for domains that are stored in the DNS server.
 

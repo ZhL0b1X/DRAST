@@ -59,7 +59,6 @@ Then you can add the domains each from a new line to the file in the following f
 ```
 example.com
 www.example.com
-
 ```
 
 After you have edited the file, you can launch the program:

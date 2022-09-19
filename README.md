@@ -74,20 +74,4 @@ File names are represented as date and time.
 ```
 cd Output
 ```
-# Advice for Advanced
-For more advanced interaction with the data, you can go to the "lib" directory<br /> 
-and edit the "Domaininfo.py" file by commenting out line 248 and adding the "types" variable to the "return" statement
-
-From this:
-```python
-types = A, AAAA, MX, TXT, CNAME, NS, SOA
-json_object = json.dumps(types, indent = 10)	
-return json_object
-```
-To this:
-```python
-types = A, AAAA, MX, TXT, CNAME, NS, SOA
-#json_object = json.dumps(types, indent = 10)	
-return types
-```
 _______

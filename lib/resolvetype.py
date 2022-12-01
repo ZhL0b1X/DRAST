@@ -1,10 +1,9 @@
+#!/usr/bin/env python3
+
 import time 
 import os, sys
 from datetime import datetime
 from lib.dnsresolver import domaininfo
-
-
-
 
 class makefile(object):
 

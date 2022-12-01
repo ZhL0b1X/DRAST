@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import time
 import os, sys
@@ -290,4 +292,10 @@ class domaininfo(object):
         else:
             json_object = json.dumps(SOA, indent = 10)  
             return json_object
-        
+
+def main():
+    message = "This is a module!"
+    print(message)
+
+if __name__ == '__main__':
+    main()

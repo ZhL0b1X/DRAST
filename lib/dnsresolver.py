@@ -167,7 +167,7 @@ class domaininfo(object):
             json_object = json.dumps(A, indent = 10)    
             return json_object
     
-    def resolverAAAA(self, json_format=True):
+    def resolveAAAA(self, json_format=True):
         if self.AAAA:
             AAAA =  {"date_time": self.time,
                      "domain_name": self.url,

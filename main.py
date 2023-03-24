@@ -22,7 +22,7 @@ if __name__ == "__main__":
 		symbol_red    = colored("[!]", "red")
 		symbol_yellow = colored("[!]", "yellow")
 		pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
-		main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Exit"])]
+		main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Add to db", "Exit"])]
 		format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
 		wait          = animation.Wait(color="green", speed=0.1)
 		file          = makefile()
@@ -31,8 +31,8 @@ if __name__ == "__main__":
 		os.system('cls' if os.name == 'nt' else 'clear')
 		if str(main_answer) == "{'main': 'Exit'}":
 			sys.exit()
+
 		os.system('cls' if os.name == 'nt' else 'clear')
-		format_answer = inquirer.prompt(format_menu)
 		cursor.show()
 		os.system('cls' if os.name == 'nt' else 'clear')
 		while True:
@@ -51,7 +51,10 @@ if __name__ == "__main__":
 					os.system('cls' if os.name == 'nt' else 'clear')
 					continue
 			break
+		if str(main_answer) == "{'main': 'Add to db'}":
+			file.database(dns_ip)
 		if str(main_answer) == "{'main': 'Single domain resolve'}":
+			format_answer = inquirer.prompt(format_menu)
 			while True:
 				print("Please write domain in next format: \n\n1: example.com \n\n2: www.example.com\n")
 				domain = input("Please type domain: ")
@@ -71,6 +74,7 @@ if __name__ == "__main__":
 			elif str(format_answer) == "{'format': 'Dictionary'}":
 				file.single(domain, dns_ip, json=False)
 		elif str(main_answer) == "{'main': 'Bulk resolve'}":
+			format_answer = inquirer.prompt(format_menu)
 			cursor.hide()
 			print(symbol_yellow + " Be sure that you edit domain_list.txt " + symbol_yellow)
 			wait.start()

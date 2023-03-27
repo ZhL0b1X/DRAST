@@ -82,63 +82,68 @@ class makefile(object):
             file.close()
 
 
-    def database(self, dns):
+    def database(self, dns, suspended_mode=False):
         conn = sqlite3.connect('resolver.db')
 
         conn.execute('''CREATE TABLE IF NOT EXISTS dns_records
                          (date_time TEXT, domain_name TEXT, record_type TEXT,
                           resolver TEXT, status TEXT, data TEXT)''')
+        while True:
+            for url in self.file:
+                url = url.strip()
+                domain_object  = domaininfo(url, dns)
+                resolveA = domain_object.resolveA(json_format=False)
+                resolveAAAA = domain_object.resolveAAAA(json_format=False)
+                resolveMX = domain_object.resolveMX(json_format=False)
+                resolveTXT = domain_object.resolveTXT(json_format=False)
+                resolveCNAME = domain_object.resolveCNAME(json_format=False)
+                resolveNS = domain_object.resolveNS(json_format=False)
+                resolveSOA = domain_object.resolveSOA(json_format=False)
+                
 
-        for url in self.file:
-            url = url.strip()
-            domain_object  = domaininfo(url, dns)
-            resolveA = domain_object.resolveA(json_format=False)
-            resolveAAAA = domain_object.resolveAAAA(json_format=False)
-            resolveMX = domain_object.resolveMX(json_format=False)
-            resolveTXT = domain_object.resolveTXT(json_format=False)
-            resolveCNAME = domain_object.resolveCNAME(json_format=False)
-            resolveNS = domain_object.resolveNS(json_format=False)
-            resolveSOA = domain_object.resolveSOA(json_format=False)
-            
+                for result in resolveA['data']:
+                    data_json = json.dumps(result)
+                    conn.execute('''INSERT INTO dns_records
+                                     (date_time, domain_name, record_type, resolver, status, data)
+                                     VALUES (?, ?, ?, ?, ?, ?)''',
+                                 (resolveA['date_time'], resolveA['domain_name'], resolveA['record_type'], resolveA['resolver'], resolveA['status'], data_json))
 
-            for result in resolveA['data']:
-                data_json = json.dumps(result)
                 conn.execute('''INSERT INTO dns_records
                                  (date_time, domain_name, record_type, resolver, status, data)
                                  VALUES (?, ?, ?, ?, ?, ?)''',
-                             (resolveA['date_time'], resolveA['domain_name'], resolveA['record_type'], resolveA['resolver'], resolveA['status'], data_json))
+                             (resolveAAAA['date_time'], resolveAAAA['domain_name'], resolveAAAA['record_type'], resolveAAAA['resolver'], resolveAAAA['status'], resolveAAAA['data']))
 
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveAAAA['date_time'], resolveAAAA['domain_name'], resolveAAAA['record_type'], resolveAAAA['resolver'], resolveAAAA['status'], resolveAAAA['data']))
+                conn.execute('''INSERT INTO dns_records
+                                 (date_time, domain_name, record_type, resolver, status, data)
+                                 VALUES (?, ?, ?, ?, ?, ?)''',
+                             (resolveMX['date_time'], resolveMX['domain_name'], resolveMX['record_type'], resolveMX['resolver'], resolveMX['status'], resolveMX['data']))
 
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveMX['date_time'], resolveMX['domain_name'], resolveMX['record_type'], resolveMX['resolver'], resolveMX['status'], resolveMX['data']))
+                conn.execute('''INSERT INTO dns_records
+                                 (date_time, domain_name, record_type, resolver, status, data)
+                                 VALUES (?, ?, ?, ?, ?, ?)''',
+                             (resolveTXT['date_time'], resolveTXT['domain_name'], resolveTXT['record_type'], resolveTXT['resolver'], resolveTXT['status'], resolveTXT['data']))
 
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveTXT['date_time'], resolveTXT['domain_name'], resolveTXT['record_type'], resolveTXT['resolver'], resolveTXT['status'], resolveTXT['data']))
+             
+                conn.execute('''INSERT INTO dns_records
+                                 (date_time, domain_name, record_type, resolver, status, data)
+                                 VALUES (?, ?, ?, ?, ?, ?)''',
+                             (resolveCNAME['date_time'], resolveCNAME['domain_name'], resolveCNAME['record_type'], resolveCNAME['resolver'], resolveCNAME['status'], resolveCNAME['data']))
+             
+                conn.execute('''INSERT INTO dns_records
+                                 (date_time, domain_name, record_type, resolver, status, data)
+                                 VALUES (?, ?, ?, ?, ?, ?)''',
+                             (resolveNS['date_time'], resolveNS['domain_name'], resolveNS['record_type'], resolveNS['resolver'], resolveNS['status'], resolveNS['data']))
 
-         
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveCNAME['date_time'], resolveCNAME['domain_name'], resolveCNAME['record_type'], resolveCNAME['resolver'], resolveCNAME['status'], resolveCNAME['data']))
-         
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveNS['date_time'], resolveNS['domain_name'], resolveNS['record_type'], resolveNS['resolver'], resolveNS['status'], resolveNS['data']))
+                conn.execute('''INSERT INTO dns_records
+                                 (date_time, domain_name, record_type, resolver, status, data)
+                                 VALUES (?, ?, ?, ?, ?, ?)''',
+                             (resolveSOA['date_time'], resolveSOA['domain_name'], resolveSOA['record_type'], resolveSOA['resolver'], resolveSOA['status'], resolveSOA['data']))
+            
+            conn.commit()
 
-            conn.execute('''INSERT INTO dns_records
-                             (date_time, domain_name, record_type, resolver, status, data)
-                             VALUES (?, ?, ?, ?, ?, ?)''',
-                         (resolveSOA['date_time'], resolveSOA['domain_name'], resolveSOA['record_type'], resolveSOA['resolver'], resolveSOA['status'], resolveSOA['data']))
+            if not suspended_mode:
+                break
 
+            time.sleep(10)
 
-        conn.commit()
         conn.close()

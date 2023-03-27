@@ -20,14 +20,17 @@ if __name__ == "__main__":
 		logo          = colored(logo_text, 'blue')
 		print(logo)
 		symbol_red    = colored("[!]", "red")
+		processing 	  = colored("Processing", "green")
 		symbol_yellow = colored("[!]", "yellow")
 		pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
 		main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Add to db", "Exit"])]
 		format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
+		suspended_db  = [inquirer.List("format", message="Would you like to turn on suspended mode?", choices=["Yes" , "No"])]
 		wait          = animation.Wait(color="green", speed=0.1)
 		file          = makefile()
 		cursor.hide()
-		main_answer   = inquirer.prompt(main_menu)  
+		main_answer   = inquirer.prompt(main_menu)
+
 		os.system('cls' if os.name == 'nt' else 'clear')
 		if str(main_answer) == "{'main': 'Exit'}":
 			sys.exit()
@@ -52,7 +55,19 @@ if __name__ == "__main__":
 					continue
 			break
 		if str(main_answer) == "{'main': 'Add to db'}":
-			file.database(dns_ip)
+			cursor.hide()
+			suspended_ansewer = inquirer.prompt(suspended_db)
+			if str(suspended_ansewer) == "{'format': 'Yes'}":
+				os.system('cls' if os.name == 'nt' else 'clear')
+				print(processing)
+				file.database(dns_ip, suspended_mode=True)
+
+				
+			elif str(suspended_ansewer) == "{'format': 'No'}":
+				os.system('cls' if os.name == 'nt' else 'clear')
+				wait.start()
+				file.database(dns_ip, suspended_mode=False)
+
 		if str(main_answer) == "{'main': 'Single domain resolve'}":
 			format_answer = inquirer.prompt(format_menu)
 			while True:

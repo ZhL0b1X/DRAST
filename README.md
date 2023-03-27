@@ -3,7 +3,7 @@
 
 ___
 
-DNS Resolver is a Python program that collects DNS record data for domains stored in a DNS server. It currently supports A, AAAA, MX, NS, SOA, TXT, and CNAME record types, and can save the collected data to a file or SQLite3 database. The program is under active development and will have more features in the future.
+DNS Resolver is a Python program that collects DNS record data for domains stored in a DNS server. It currently supports A, AAAA, MX, NS, SOA, TXT, and CNAME record types, and can save the collected data to a file or SQLite3 database.
 
 ____
 
@@ -14,6 +14,7 @@ ____
 - Add custom DNS IP address.
 - Location information for type A record.
 - Add resolved data to a SQLite3 database.
+- Suspended mode for continuous data collection and program operation, allowing users to modify dns_domains.txt while the program runs.
 
 ## Installation
 
@@ -61,7 +62,8 @@ ____
 
 3. During operation, the program will create a directory called `Output` in which the data files will be saved. File names are represented as date and time.
 
-4. The program creates a resolver.db file in the root directory of the program and saves all the received data in it.
+4. The program creates a resolver.db file in the root directory of the program and saves all the received data in it. When the program is in suspended mode, users can modify the dns_domains.txt file without disrupting the data collection process. To enter suspended mode, press CTRL + Z in the terminal. To resume the program, use the fg command.
+
 
 # Note
 This program has only been tested on macOS and Linux operating systems. Use on other operating systems is not guaranteed to work.

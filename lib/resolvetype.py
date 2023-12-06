@@ -5,18 +5,18 @@ import json
 import sqlite3
 import os, sys
 from datetime import datetime
-from lib.dnsresolver import domaininfo
+from lib.dnsresolver import Domaininfo
 
-class makefile(object):
+class Makefile(object):
 
     def __init__(self):
-        super(makefile, self).__init__()
+        super(Makefile, self).__init__()
         self.date = datetime.now().strftime('%Y-%m-%d|%H:%M:%S')
         self.file = open(os.path.join("Domain_list", "dns_domains.txt"))
 
 
     def single(self, url, dns, json=True):
-        domain_object  = domaininfo(url, dns)
+        domain_object  = Domaininfo(url, dns)
         if json == False:
             resolveA = domain_object.resolveA(json_format=False)
             resolveAAAA = domain_object.resolveAAAA(json_format=False)
@@ -51,7 +51,7 @@ class makefile(object):
     def bulk(self, dns, json=True):
         for url in self.file:
             url = url.strip()   
-            domain_object = domaininfo(url, dns)
+            domain_object = Domaininfo(url, dns)
             if json == False:
                 resolveA = domain_object.resolveA(json_format=False)
                 resolveAAAA = domain_object.resolveAAAA(json_format=False)
@@ -91,7 +91,7 @@ class makefile(object):
         while True:
             for url in self.file:
                 url = url.strip()
-                domain_object  = domaininfo(url, dns)
+                domain_object  = Domaininfo(url, dns)
                 resolveA = domain_object.resolveA(json_format=False)
                 resolveAAAA = domain_object.resolveAAAA(json_format=False)
                 resolveMX = domain_object.resolveMX(json_format=False)

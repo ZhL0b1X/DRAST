@@ -10,10 +10,10 @@ from datetime import datetime
 
 
 
-class domaininfo(object):
+class Domaininfo(object):
 
     def __init__(self, url, resolver_ip):
-        super(domaininfo, self).__init__()
+        super(Domaininfo, self).__init__()
         self.url   = url
         self.A     = []
         self.MX    = []
@@ -27,8 +27,7 @@ class domaininfo(object):
         self.resolver = resolver_ip.nameservers[0]
         try:
             answers = resolver_ip.resolve(self.url, 'A')
-            for rdata in answers:
-                self.A.append(rdata.address)
+            self.A  = [rdata.address for rdata in answers]
         except dns.resolver.NXDOMAIN:
             self.A_error = "NXDOMAIN"
         except dns.resolver.NoNameservers:
@@ -142,7 +141,6 @@ class domaininfo(object):
             except (json.decoder.JSONDecodeError, 
                     requests.exceptions.ConnectionError):
                 time.sleep(4)
-            break
         return data
 
 

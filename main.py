@@ -8,7 +8,7 @@ import dns.resolver
 import pyfiglet as pf
 from datetime import datetime
 from termcolor import colored
-from lib.resolvetype import makefile
+from lib.resolvetype import Makefile
 
 
 
@@ -27,14 +27,12 @@ if __name__ == "__main__":
 		format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
 		suspended_db  = [inquirer.List("format", message="Would you like to turn on suspended mode?", choices=["Yes" , "No"])]
 		wait          = animation.Wait(color="green", speed=0.1)
-		file          = makefile()
+		file          = Makefile()
 		cursor.hide()
 		main_answer   = inquirer.prompt(main_menu)
-
 		os.system('cls' if os.name == 'nt' else 'clear')
 		if str(main_answer) == "{'main': 'Exit'}":
 			sys.exit()
-
 		os.system('cls' if os.name == 'nt' else 'clear')
 		cursor.show()
 		os.system('cls' if os.name == 'nt' else 'clear')
@@ -61,16 +59,14 @@ if __name__ == "__main__":
 				os.system('cls' if os.name == 'nt' else 'clear')
 				print(processing)
 				file.database(dns_ip, suspended_mode=True)
-
-				
 			elif str(suspended_ansewer) == "{'format': 'No'}":
 				os.system('cls' if os.name == 'nt' else 'clear')
 				wait.start()
 				file.database(dns_ip, suspended_mode=False)
-
 		if str(main_answer) == "{'main': 'Single domain resolve'}":
 			format_answer = inquirer.prompt(format_menu)
 			while True:
+				os.system('cls' if os.name == 'nt' else 'clear')
 				print("Please write domain in next format: \n\n1: example.com \n\n2: www.example.com\n")
 				domain = input("Please type domain: ")
 				match  = re.search(pattern, domain)
@@ -87,7 +83,7 @@ if __name__ == "__main__":
 			if str(format_answer) == "{'format': 'Json'}":
 				file.single(domain, dns_ip, json=True)
 			elif str(format_answer) == "{'format': 'Dictionary'}":
-				file.single(domain, dns_ip, json=False)
+				file.single(domain, dns_ip, json=False) 
 		elif str(main_answer) == "{'main': 'Bulk resolve'}":
 			format_answer = inquirer.prompt(format_menu)
 			cursor.hide()

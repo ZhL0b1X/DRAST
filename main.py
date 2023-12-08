@@ -9,7 +9,7 @@ import animation
 import dns.resolver
 import pyfiglet as pf
 from termcolor import colored
-from lib.dnsresolver import DomainInfo
+from lib.dnsresolver import DomainInfo  # Capitalize the 'I' in 'DomainInfo'
 from lib.resolvetype import Makefile
 
 def interactive_mode(Make):
@@ -76,13 +76,12 @@ def interactive_mode(Make):
             cursor.hide()
             print(symbol_yellow + " Be sure to specify the correct domain list file " + symbol_yellow)
 
-            # Prompt for the file path if not provided
             if not input_file:
                 input_file = input("Please enter the path to your domain list file: ")
-                if not input_file:
+                if not input_file.strip():
                     print(symbol_red + " No file path provided. Returning to main menu. " + symbol_red)
                     continue
-                
+
             wait.start()
             if str(format_answer) == "{'format': 'Json'}":
                 Make.bulk(dns_ip, input_file, json=True)
@@ -93,7 +92,6 @@ def interactive_mode(Make):
             print("Data saved")
             time.sleep(1.5)
             os.system('cls' if os.name == 'nt' else 'clear')
-
 def main():
     Make = Makefile()
     drast_description = (

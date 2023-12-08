@@ -9,7 +9,7 @@ import animation
 import dns.resolver
 import pyfiglet as pf
 from termcolor import colored
-from lib.dnsresolver import DomainInfo  # Capitalize the 'I' in 'DomainInfo'
+from lib.dnsresolver import DomainInfo
 from lib.resolvetype import Makefile
 
 def interactive_mode(Make):

@@ -1,10 +1,16 @@
 
-<img width="513" src="https://user-images.githubusercontent.com/85976942/191089269-0918c8c1-db83-4f67-bfcb-7218697960d6.png">
+
+
+    ____  ____  ___   ___________
+   / __ \/ __ \/   | / ___/_  __/
+  / / / / /_/ / /| | \__ \ / /
+ / /_/ / _, _/ ___ |___/ // /
+/_____/_/ |_/_/  |_/____//_/
+
 
 ___
 
-DNS Resolver is a Python program that collects DNS record data for domains stored in a DNS server. It currently supports A, AAAA, MX, NS, SOA, TXT, and CNAME record types, and can save the collected data to a file or SQLite3 database.
-
+DRAST is a versatile Python program designed to analyze and collect DNS record data for domains stored in a DNS server. It supports a variety of record types, including A, AAAA, MX, NS, SOA, TXT, and CNAME. The collected data can be saved to a file or an SQLite3 database.
 ____
 
 ## Features
@@ -13,8 +19,9 @@ ____
 - Collect data into a text file.
 - Add custom DNS IP address.
 - Location information for type A record.
-- Add resolved data to a SQLite3 database.
-- Suspended mode for continuous data collection and program operation, allowing users to modify dns_domains.txt while the program runs.
+- Add resolved data to an SQLite3 database.
+- Suspended mode for continuous data collection and program operation, allowing users to modify `dns_domains.txt` while the program runs.
+- Interactive and command-line modes for flexibility in usage.
 
 ## Installation
 
@@ -27,13 +34,13 @@ ____
 1. Clone the repository:
 
     ```sh
-    git clone https://github.com/ADK200/DNS_resolver.git
+    git clone https://github.com/ariolus/DRAST
     ```
 
 2. Install dependencies:
 
     ```sh
-    cd DNS_resolver
+    cd DRUST
     pip3 install -r requirements.txt
     ```
 
@@ -53,17 +60,56 @@ ____
     www.example.com
     ```
 
-2. Once you have edited the file, go back to the root directory of the program and run it:
+    Alternatively, you can use the `-i` flag to specify a file containing a list of domains for bulk processing:
 
     ```sh
-    cd ..
-    python3 main.py
+    python3 main.py -b -i /path/to/file.txt
     ```
+
+    The file should contain one domain per line.
+
+2. Once you have edited the file, you can run the program in one of two modes:
+
+   - **Interactive Mode:**
+
+     Use the following command for interactive mode:
+
+     ```sh
+     python3 main.py -I
+     ```
+
+     Interactive mode allows real-time interaction with the program. You can enter commands directly to perform various actions.
+
+   - **Normal Mode:**
+
+     For more options and information, you can check the help menu:
+     
+     ```sh
+     python3 main.py -h
+     ```
+
+     Example: Resolve a single domain in JSON format:
+     
+     ```sh
+     python3 main.py -s example.com -j
+     ```
+
+     Example: Bulk resolve domains from a file in dictionary format:
+     
+     ```sh
+     python3 main.py -b -i /path/to/file.txt -d
+     ```
+
+     Example: Use SQL mode with a custom DNS IP address and suspended mode:
+    
+     ```sh
+     python3 main.py --sql --dns 8.8.8.8 -S
+     ```
 
 3. During operation, the program will create a directory called `Output` in which the data files will be saved. File names are represented as date and time.
 
-4. The program creates a resolver.db file in the root directory of the program and saves all the received data in it. When the program is in suspended mode, users can modify the dns_domains.txt file without disrupting the data collection process. To enter suspended mode, press CTRL + Z in the terminal. To resume the program, use the fg command.
+4. The program creates a `resolver.db` file in the root directory of the program and saves all the received data in it. When the program is in suspended mode, users can modify the `dns_domains.txt` file without disrupting the data collection process. To enter suspended mode, press `CTRL + Z` in the terminal. To resume the program, use the `fg` command.
 
+## Note
+This program has only been tested on macOS and Linux operating systems.
 
-# Note
-This program has only been tested on macOS and Linux operating systems. Use on other operating systems is not guaranteed to work.

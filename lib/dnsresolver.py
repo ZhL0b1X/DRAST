@@ -20,7 +20,7 @@ class DomainInfo:
             try:
                 answers = resolver_ip.resolve(self.url, rtype)
                 self.records[rtype] = [rdata.to_text() for rdata in answers]
-            except dns.exception.DNSException as e:  # Now 'dns' is recognized
+            except dns.exception.DNSException as e:
                 self.errors[rtype] = type(e).__name__
 
     def Geo_ip(self):

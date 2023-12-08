@@ -19,7 +19,7 @@ class Makefile(object):
 
     def __init__(self):
         super(Makefile, self).__init__()
-        self.date = datetime.now().strftime('%Y-%m-%d|%H:%M:%S')
+        self.date = datetime.now().strftime('D%Y-%m-%dT%H-%M-%S')
         self.file = os.path.join("Domain_list", "dns_domains.txt")
 
 

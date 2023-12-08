@@ -23,7 +23,7 @@ def interactive_mode():
         symbol_red    = colored("[!]", "red")
         processing    = colored("Processing", "green")
         symbol_yellow = colored("[!]", "yellow")
-        pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
+        pattern = re.compile('^([A-Za-z0-9]\\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\\.){1,3}[A-Za-z]{2,6}$')
         main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Add to db", "Exit"])]
         format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
         suspended_db  = [inquirer.List("format", message="Would you like to turn on suspended mode?", choices=["Yes" , "No"])]

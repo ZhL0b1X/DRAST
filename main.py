@@ -112,8 +112,7 @@ def main():
         "Includes suspended mode for real-time edits to dns_domains.txt during continuous operation."
     )
     parser = argparse.ArgumentParser(
-        description=drast_description,
-        usage="python3 main.py [-h] [-I] [-s example.com] [-b optional: -i [/path/to/file/txt]] [-j | -d] [--dns IP]"
+        description=drast_description
         ) 
     mode_group = parser.add_mutually_exclusive_group(required=True)
     mode_group.add_argument("-I", "--interactive", action="store_true", help="Enable interactive mode for a user-friendly command-line interface.")

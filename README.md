@@ -100,7 +100,7 @@ ____
      python3 main.py --sql --dns 8.8.8.8 -S
      ```
 
-3. During operation, the program will create a directory called `Output` in which the data files will be saved. File names are represented as date and time.
+3. During operation, the program will create a directory called `Output` in which the data files will be saved. File names are represented as date and time. Also, if there is a need to use another output directory, the flag '-o PATH' can be used.
 
 4. The program creates a `resolver.db` file in the root directory of the program and saves all the received data in it. When the program is in suspended mode, users can modify the `dns_domains.txt` file without disrupting the data collection process. To enter suspended mode, press `CTRL + Z` in the terminal. To resume the program, use the `fg` command.
 

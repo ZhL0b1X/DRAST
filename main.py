@@ -123,9 +123,9 @@ def main():
     output_format_group = parser.add_mutually_exclusive_group()
     output_format_group.add_argument("-j", "--json", action="store_true", help="Create a JSON file.")
     output_format_group.add_argument("-d", "--dictionary", action="store_true", help="Create a dictionary file.")
-    parser.add_argument("-i", "--input_file", nargs='?', metavar="/path/to/file/txt", help="Optional flag to specify the path to a file containing a list of domains. Only applicable with -b/--bulk.")
+    parser.add_argument("-i", "--input_file", nargs='?', metavar="/path/to/file/txt", help="Optional flag to specify the path to a file containing a list of domains. Only applicable with --sql or -b/--bulk.")
     parser.add_argument("--dns", metavar="[IP]", help="Specify DNS IP address.")
-    parser.add_argument("-o", metavar="/output/path", help="Specify the output path for both -s and -b")
+    parser.add_argument("-o", "--output_directory", metavar="/output/path", help="Specify the output path for both -s and -b")
     parser.add_argument("-S", "--suspended", action="store_true", help="Enable suspended mode for SQL")
 
     args = parser.parse_args()
@@ -138,18 +138,25 @@ def main():
         dns_ip 
 
     if args.interactive:
-        if any([args.single, args.sql, args.bulk, args.suspended,  args.json, args.input_file, args.dictionary, args.dns]):
+        if any([args.single, args.output_directory, args.sql, args.bulk, args.suspended,  args.json, args.input_file, args.dictionary, args.dns]):
             print("Error: Interactive mode cannot be used with other flags.")
         else:
             interactive_mode()
     elif args.sql:
-        if any([args.single, args.bulk,  args.json, args.dictionary, args.input_file]):
-            print("Error: SQL mode cannot be used with other flags except: --suspended and --dns.")
+        input_file = args.input_file if args.input_file else None
+        if any([args.single, args.bulk,  args.json, args.dictionary, args.output_directory]):
+            print("Error: SQL mode cannot be used with other flags except: --suspended, --input_file,  --dns.")
         else:
-            if args.suspended:
-                Make.database(dns_ip, suspended_mode=True)
+            if args.input_file:
+                if args.suspended:
+                    Make.database(dns_ip, input_file, suspended_mode=True)
+                else:
+                    Make.database(dns_ip, input_file, suspended_mode=False)
             else:
-                Make.database(dns_ip, suspended_mode=False)
+                if args.suspended:
+                    Make.database(dns_ip, input_file, suspended_mode=True)
+                else:
+                    Make.database(dns_ip, input_file, suspended_mode=False)
     elif args.suspended:
         symbol_red = colored("Error: ", "red")
         print("\n" + symbol_red + "To use --suspended/-S you need specify --sql first\n")
@@ -158,31 +165,61 @@ def main():
     elif args.single:
         if any([args.sql, args.bulk, args.suspended, args.input_file]):
             print("Error: single mode cannot be used with: --sql --bulk --input_file --suspended --interactive.")
-        else: 
-            if args.json:
-                Make.single(args.single, dns_ip, json=True)
-            elif args.dictionary:
-                Make.single(args.single, dns_ip, json=False)
+        else:
+            output_directory = args.output_directory if args.output_directory else None
+            if args.output_directory:
+                if args.json:
+                    Make.single(args.single, dns_ip, output_directory,  json=True)
+                elif args.dictionary:
+                    Make.single(args.single, dns_ip, output_directory, json=False)
+                else:
+                    Make.single(args.single, dns_ip, output_directory, json=True)
             else:
-                Make.single(args.single, dns_ip, json=True)
+                if args.json:
+                    Make.single(args.single, dns_ip, output_directory, json=True)
+                elif args.dictionary:
+                    Make.single(args.single, dns_ip, output_directory, json=False)
+                else:
+                    Make.single(args.single, dns_ip, output_directory, json=True)
     elif args.bulk:
         input_file = args.input_file if args.input_file else None
-        if args.input_file:
-            if args.json:
-                Make.bulk(dns_ip, input_file, json=True)
+        output_directory = args.output_directory if args.output_directory else None
+        if args.output_directory:        
+            if args.input_file:
+                if args.json:
+                    Make.bulk(dns_ip, input_file, output_directory, json=True)
+                elif args.dictionary:
+                    Make.bulk(dns_ip, input_file, output_directory, json=False)
+                else:
+                    Make.bulk(dns_ip, input_file, output_directory, json=True)
+            elif args.json:
+                Make.bulk(dns_ip, input_file, output_directory, json=True)
             elif args.dictionary:
-                Make.bulk(dns_ip, input_file, json=False)
+                Make.bulk(dns_ip, input_file, output_directory, json=False)
             else:
-                Make.bulk(dns_ip, input_file, json=True)
-        elif args.json:
-            Make.bulk(dns_ip, input_file, json=True)
-        elif args.dictionary:
-            Make.bulk(dns_ip, input_file, json=False)
+                Make.bulk(dns_ip, input_file, output_directory, json=True)
         else:
-            Make.bulk(dns_ip, input_file, json=True)
+            if args.input_file:
+                if args.json:
+                    Make.bulk(dns_ip, input_file, output_directory, json=True)
+                elif args.dictionary:
+                    Make.bulk(dns_ip, input_file, output_directory, json=False)
+                else:
+                    Make.bulk(dns_ip, input_file, output_directory, json=True)
+            elif args.json:
+                Make.bulk(dns_ip, input_file, output_directory, json=True)
+            elif args.dictionary:
+                Make.bulk(dns_ip, input_file, output_directory, json=False)
+            else:
+                Make.bulk(dns_ip, input_file, output_directory, json=True)
     elif args.input_file:
         symbol_red = colored("Error: ", "red")
-        print("\n" + symbol_red + "To use --input_file/-i you need specify -b/--bulk first.\n")
+        print("\n" + symbol_red + "To use --input_file/-i you need specify -b/--bulk or --sql first.\n")
+        parser.print_help()
+        exit(1)
+    elif args.output_directory:
+        symbol_red = colored("Error: ", "red")
+        print("\n" + symbol_red + "To use --output_directory/-o you need specify --single or --bulk mode first\n")
         parser.print_help()
         exit(1)
     else:

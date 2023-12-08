@@ -23,7 +23,7 @@ class Makefile(object):
         self.file = os.path.join("Domain_list", "dns_domains.txt")
 
 
-    def single(self, url, dns, json=True):
+    def single(self, url, dns, output_directory=None, json=True):
         domain_object  = Domaininfo(url, dns)
         if json == False:
             resolveA = domain_object.resolveA(json_format=False)
@@ -41,8 +41,11 @@ class Makefile(object):
             resolveCNAME = domain_object.resolveCNAME(json_format=True)
             resolveNS = domain_object.resolveNS(json_format=True)
             resolveSOA = domain_object.resolveSOA(json_format=True)
-        os.makedirs("Output", exist_ok=True)
-        file = open(os.path.join("Output", self.date + ".txt"), "a")
+        if output_directory is None:
+            os.makedirs("Output", exist_ok=True)
+            file = open(os.path.join("Output", self.date + ".txt"), "a")
+        else:
+            file = open(os.path.join(output_directory, self.date + ".txt"), "a")
         file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
                                                     str(resolveA), 
                                                     str(resolveAAAA),
@@ -55,7 +58,7 @@ class Makefile(object):
         file.close()
 
 
-    def bulk(self, dns, input_file=None, json=True):
+    def bulk(self, dns, input_file=None, output_directory=None, json=True):
         if input_file is None:
             input_file = self.file
         with open(input_file, 'r') as file:
@@ -79,8 +82,11 @@ class Makefile(object):
                 resolveCNAME = domain_object.resolveCNAME(json_format=True)
                 resolveNS = domain_object.resolveNS(json_format=True)
                 resolveSOA = domain_object.resolveSOA(json_format=True)
-            os.makedirs("Output", exist_ok=True)
-            file = open(os.path.join("Output", self.date + ".txt"), "a")
+            if output_directory is None:
+                os.makedirs("Output", exist_ok=True)
+                file = open(os.path.join("Output", self.date + ".txt"), "a")
+            else:
+                file = open(os.path.join(output_directory, self.date + ".txt"), "a")
             file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
                                                         str(resolveA), 
                                                         str(resolveAAAA),
@@ -93,7 +99,7 @@ class Makefile(object):
             file.close()
 
 
-    def database(self, dns, suspended_mode=False):
+    def database(self, dns, input_file=None, suspended_mode=False):
         conn = sqlite3.connect('resolver.db')
 
         conn.execute('''CREATE TABLE IF NOT EXISTS dns_records
@@ -101,7 +107,11 @@ class Makefile(object):
                           resolver TEXT, status TEXT, data TEXT)''')
         try:    
             while True:
-                for url in open(self.file):
+                if input_file is None:
+                    input_file = self.file
+                with open(input_file, 'r') as file:
+                    file_content = file.readlines()
+                for url in file_content:
                     url = url.strip()
                     domain_object  = Domaininfo(url, dns)
                     resolveA = domain_object.resolveA(json_format=False)

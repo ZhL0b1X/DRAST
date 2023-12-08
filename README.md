@@ -13,7 +13,7 @@ ____
 - Collect data into a text file.
 - Add custom DNS IP address.
 - Location information for type A record.
-- Add resolved data to an SQLite3 database.
+- Add collected data to an SQLite3 database.
 - Suspended mode for continuous data collection and program operation, allowing users to modify `dns_domains.txt` while the program runs.
 - Interactive and command-line modes for flexibility in usage.
 

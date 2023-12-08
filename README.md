@@ -72,7 +72,7 @@ ____
      python3 main.py -I
      ```
 
-     Interactive mode allows real-time interaction with the program. You can enter commands directly to perform various actions.
+     Interactive mode allows real-time interaction with the program.
 
    - **Normal Mode:**
 

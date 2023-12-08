@@ -1,76 +1,60 @@
 import re
-import time 
+import time
 import cursor
-import os, sys
+import os
+import sys
 import inquirer
 import argparse
 import animation
 import dns.resolver
 import pyfiglet as pf
-from datetime import datetime
 from termcolor import colored
+from lib.dnsresolver import DomainInfo  # Capitalize the 'I' in 'DomainInfo'
 from lib.resolvetype import Makefile
 
-
-def interactive_mode():
+def interactive_mode(Make):
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        logo_text     = pf.figlet_format("DRAST", font='slant')
-        defenition    = colored("DNS Record Analysis and Storage Tool", 'blue')
-        logo          = colored(logo_text, 'blue')
+        logo_text = pf.figlet_format("DRAST", font='slant')
+        definition = colored("DNS Record Analysis and Storage Tool", 'blue')
+        logo = colored(logo_text, 'blue')
         print(logo)
-        print(defenition + "\n")
-        symbol_red    = colored("[!]", "red")
-        processing    = colored("Processing", "green")
+        print(definition + "\n")
+        symbol_red = colored("[!]", "red")
         symbol_yellow = colored("[!]", "yellow")
-        pattern       = re.compile('^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
-        main_menu     = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Add to db", "Exit"])]
-        format_menu   = [inquirer.List("format", message="Choose format", choices=["Json" , "Dictionary"])]
-        suspended_db  = [inquirer.List("format", message="Would you like to turn on suspended mode?", choices=["Yes" , "No"])]
-        wait          = animation.Wait(color="green", speed=0.1)
-        file          = Makefile()
+        pattern = re.compile(r'^([A-Za-z0-9]\.|[A-Za-z0-9][A-Za-z0-9-]{0,61}[A-Za-z0-9]\.){1,3}[A-Za-z]{2,6}$')
+        main_menu = [inquirer.List("main", message="Choose option", choices=["Single domain resolve", "Bulk resolve", "Exit"])]
+        format_menu = [inquirer.List("format", message="Choose format", choices=["Json", "Dictionary"])]
+        wait = animation.Wait(color="green", speed=0.1)
         cursor.hide()
-        main_answer   = inquirer.prompt(main_menu)
+        main_answer = inquirer.prompt(main_menu)
         os.system('cls' if os.name == 'nt' else 'clear')
         if str(main_answer) == "{'main': 'Exit'}":
             sys.exit()
-        os.system('cls' if os.name == 'nt' else 'clear')
         cursor.show()
         os.system('cls' if os.name == 'nt' else 'clear')
         while True:
             try:
-                dns_ip    = dns.resolver.Resolver()
-                input_dns = [input('Enter DNS IP or press "Enter" to use the default IP: ')]
+                dns_ip = dns.resolver.Resolver()
+                input_dns = input('Enter DNS IP or press "Enter" to use the default IP: ')
                 os.system('cls' if os.name == 'nt' else 'clear')
-                if input_dns == [""]:
-                    dns_ip
-                else:
-                    dns_ip.nameservers = input_dns
+                if input_dns:
+                    dns_ip.nameservers = [input_dns]
             except ValueError:
-                    print("\n\n\n" + symbol_red + " Invalid DNS ip " + symbol_red + "\n" +
-                    symbol_red + "Please try again" + symbol_red)
-                    time.sleep(2)
-                    os.system('cls' if os.name == 'nt' else 'clear')
-                    continue
+                print("\n\n\n" + symbol_red + " Invalid DNS IP " + symbol_red + "\n" +
+                      symbol_red + "Please try again" + symbol_red)
+                time.sleep(2)
+                os.system('cls' if os.name == 'nt' else 'clear')
+                continue
             break
-        if str(main_answer) == "{'main': 'Add to db'}":
-            cursor.hide()
-            suspended_ansewer = inquirer.prompt(suspended_db)
-            if str(suspended_ansewer) == "{'format': 'Yes'}":
-                os.system('cls' if os.name == 'nt' else 'clear')
-                print(processing)
-                file.database(dns_ip, suspended_mode=True)
-            elif str(suspended_ansewer) == "{'format': 'No'}":
-                os.system('cls' if os.name == 'nt' else 'clear')
-                wait.start()
-                file.database(dns_ip, suspended_mode=False)
+
         if str(main_answer) == "{'main': 'Single domain resolve'}":
             format_answer = inquirer.prompt(format_menu)
             while True:
                 os.system('cls' if os.name == 'nt' else 'clear')
                 print("Please write domain in next format: \n\n1: example.com \n\n2: www.example.com\n")
                 domain = input("Please type domain: ")
-                match  = re.search(pattern, domain)
+                match = re.search(pattern, domain)
                 if match:
                     break
                 else:
@@ -81,25 +65,33 @@ def interactive_mode():
             os.system('cls' if os.name == 'nt' else 'clear')
             cursor.hide()
             wait.start()
-            if str(format_answer) == "{'format': 'Json'}":
-                file.single(domain, dns_ip, json=True)
-            elif str(format_answer) == "{'format': 'Dictionary'}":
-                file.single(domain, dns_ip, json=False) 
+            domain_info = DomainInfo(domain, dns_ip)
+            result = domain_info.resolve('A', json_format=str(format_answer) == "{'format': 'Json'}")
+            print(result)
+            wait.stop()
+            time.sleep(1.5)
+
         elif str(main_answer) == "{'main': 'Bulk resolve'}":
             format_answer = inquirer.prompt(format_menu)
             cursor.hide()
-            print(symbol_yellow + " Be sure that you edit domain_list.txt " + symbol_yellow)
+            print(symbol_yellow + " Be sure to specify the correct domain list file " + symbol_yellow)
+
+            if not input_file:
+                input_file = input("Please enter the path to your domain list file: ")
+                if not input_file.strip():
+                    print(symbol_red + " No file path provided. Returning to main menu. " + symbol_red)
+                    continue
+
             wait.start()
             if str(format_answer) == "{'format': 'Json'}":
-                file.bulk(dns_ip, json=True)
+                Make.bulk(dns_ip, input_file, json=True)
             elif str(format_answer) == "{'format': 'Dictionary'}":
-                file.bulk(dns_ip, json=False)
-        os.system('cls' if os.name == 'nt' else 'clear')
-        wait.stop()
-        print("Data saved")
-        time.sleep(1.5)
-        os.system('cls' if os.name == 'nt' else 'clear')
-
+                Make.bulk(dns_ip, input_file, json=False)
+            os.system('cls' if os.name == 'nt' else 'clear')
+            wait.stop()
+            print("Data saved")
+            time.sleep(1.5)
+            os.system('cls' if os.name == 'nt' else 'clear')
 def main():
     Make = Makefile()
     drast_description = (
@@ -140,7 +132,7 @@ def main():
         if any([args.single, args.output_directory, args.sql, args.bulk, args.suspended,  args.json, args.input_file, args.dictionary, args.dns]):
             print("Error: Interactive mode cannot be used with other flags.")
         else:
-            interactive_mode()
+            interactive_mode(Make)
     elif args.sql:
         input_file = args.input_file if args.input_file else None
         if any([args.single, args.bulk,  args.json, args.dictionary, args.output_directory]):

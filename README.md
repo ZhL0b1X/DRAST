@@ -4,12 +4,12 @@
 
 ___
 
-DRAST is a versatile Python program designed to analyze and collect DNS record data for domains stored in a DNS server. It supports a variety of record types, including A, AAAA, MX, NS, SOA, TXT, and CNAME. The collected data can be saved to a file or an SQLite3 database.
+DRAST is a versatile Python program designed to analyze and collect DNS record data for domains stored in a DNS server. It supports a variety of record types, including A, AAAA, MX, NS, SOA, TXT, CNAME, PTR, SRV and CAA. The collected data can be saved to a file or an SQLite3 database.
 ____
 
 ## Features
 
-- Collect A, AAAA, MX, NS, SOA, TXT, CNAME records.
+- Collect A, AAAA, MX, NS, SOA, TXT, CNAME, PTR, SRV, CAA records.
 - Collect data into a text file.
 - Add custom DNS IP address.
 - Location information for type A record.

@@ -19,6 +19,9 @@ class Domaininfo(object):
         self.MX    = []
         self.NS    = []
         self.SOA   = []
+        self.PTR   = []
+        self.SRV   = []
+        self.CAA   = []
         self.TXT   = []
         self.AAAA  = []
         self.CNAME = []
@@ -122,6 +125,48 @@ class Domaininfo(object):
             self.SOA_error = "Timeout"
         except: 
             self.SOA = None
+        try: 
+            answers = resolver_ip.resolve(self.url, 'PTR')
+            for rdata in answers:
+                self.PTR.append(rdata.target)
+        except dns.resolver.NXDOMAIN:
+            self.PTR_error = "NXDOMAIN"
+        except dns.resolver.NoNameservers:
+            self.PTR_error = "NoNameservers"
+        except dns.resolver.NoAnswer:
+            self.PTR_error = "NoAnswer"
+        except dns.exception.Timeout:
+            self.PTR_error = "Timeout"
+        except: 
+            self.PTR = None
+        try: 
+            answers = resolver_ip.resolve(self.url, 'SRV')
+            for rdata in answers:
+                self.SRV.append(rdata)
+        except dns.resolver.NXDOMAIN:
+            self.SRV_error = "NXDOMAIN"
+        except dns.resolver.NoNameservers:
+            self.SRV_error = "NoNameservers"
+        except dns.resolver.NoAnswer:
+            self.SRV_error = "NoAnswer"
+        except dns.exception.Timeout:
+            self.SRV_error = "Timeout"
+        except: 
+            self.SRV = None
+        try: 
+            answers = resolver_ip.resolve(self.url, 'CAA')
+            for rdata in answers:
+                self.CAA.append(rdata)
+        except dns.resolver.NXDOMAIN:
+            self.CAA_error = "NXDOMAIN"
+        except dns.resolver.NoNameservers:
+            self.CAA_error = "NoNameservers"
+        except dns.resolver.NoAnswer:
+            self.CAA_error = "NoAnswer"
+        except dns.exception.Timeout:
+            self.CAA_error = "Timeout"
+        except: 
+            self.CAA = None
 
     def Geo_ip(self):
         data = []
@@ -289,6 +334,69 @@ class Domaininfo(object):
             return SOA
         else:
             json_object = json.dumps(SOA, indent = 10)  
+            return json_object
+
+    def resolvePTR(self, json_format=True):                
+        if self.PTR:
+            PTR = {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "PTR",
+                     "resolver": self.resolver,
+                     "status": "OK",
+                     "data": str(self.PTR)}
+        else:
+            PTR = {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "PTR",
+                     "resolver": self.resolver,
+                     "status": self.PTR_error,
+                     "data": ""}
+        if json_format == False:
+            return PTR
+        else:
+            json_object = json.dumps(PTR, indent = 10)    
+            return json_object
+
+    def resolveSRV(self, json_format=True):                   
+        if self.SRV:
+            SRV  =   {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "SRV",
+                     "resolver": self.resolver,
+                     "status": "OK",
+                     "data": str(self.SRV)}
+        else:
+            SRV  =   {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "SRV",
+                     "resolver": self.resolver,
+                     "status": self.SRV_error,
+                     "data": ""}
+        if json_format == False:
+            return SRV
+        else:
+            json_object = json.dumps(SRV, indent = 10)   
+            return json_object
+
+    def resolveCAA(self, json_format=True):
+        if self.CAA:
+            CAA  =   {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "CAA",
+                     "resolver": self.resolver,
+                     "status": "OK",
+                     "data": str(self.CAA)}
+        else:
+            CAA  =   {"date_time": self.time,
+                     "domain_name": self.url,
+                     "record_type": "CAA",
+                     "resolver": self.resolver,
+                     "status": self.CAA_error,
+                     "data": ""}
+        if json_format == False:
+            return CAA
+        else:
+            json_object = json.dumps(CAA, indent = 10)  
             return json_object
 
 def main():

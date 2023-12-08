@@ -33,6 +33,9 @@ class Makefile(object):
             resolveCNAME = domain_object.resolveCNAME(json_format=False)
             resolveNS = domain_object.resolveNS(json_format=False)
             resolveSOA = domain_object.resolveSOA(json_format=False)
+            resolvePTR = domain_object.resolvePTR(json_format=False)
+            resolveSRV = domain_object.resolveSRV(json_format=False)
+            resolveCAA = domain_object.resolveCAA(json_format=False)
         else:
             resolveA = domain_object.resolveA(json_format=True)
             resolveAAAA = domain_object.resolveAAAA(json_format=True)
@@ -41,19 +44,25 @@ class Makefile(object):
             resolveCNAME = domain_object.resolveCNAME(json_format=True)
             resolveNS = domain_object.resolveNS(json_format=True)
             resolveSOA = domain_object.resolveSOA(json_format=True)
+            resolvePTR = domain_object.resolvePTR(json_format=True)
+            resolveSRV = domain_object.resolveSRV(json_format=True)
+            resolveCAA = domain_object.resolveCAA(json_format=True)
         if output_directory is None:
             os.makedirs("Output", exist_ok=True)
             file = open(os.path.join("Output", self.date + ".txt"), "a")
         else:
             file = open(os.path.join(output_directory, self.date + ".txt"), "a")
-        file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
+        file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
                                                     str(resolveA), 
                                                     str(resolveAAAA),
                                                     str(resolveMX), 
                                                     str(resolveTXT), 
                                                     str(resolveCNAME), 
                                                     str(resolveNS), 
-                                                    str(resolveSOA))
+                                                    str(resolveSOA),
+                                                    str(resolvePTR), 
+                                                    str(resolveSRV), 
+                                                    str(resolveCAA))
                                                     )
         file.close()
 
@@ -74,6 +83,9 @@ class Makefile(object):
                 resolveCNAME = domain_object.resolveCNAME(json_format=False)
                 resolveNS = domain_object.resolveNS(json_format=False)
                 resolveSOA = domain_object.resolveSOA(json_format=False)
+                resolvePTR = domain_object.resolvePTR(json_format=False)
+                resolveSRV = domain_object.resolveSRV(json_format=False)
+                resolveCAA = domain_object.resolveCAA(json_format=False)
             else:
                 resolveA = domain_object.resolveA(json_format=True)
                 resolveAAAA = domain_object.resolveAAAA(json_format=True)
@@ -82,19 +94,25 @@ class Makefile(object):
                 resolveCNAME = domain_object.resolveCNAME(json_format=True)
                 resolveNS = domain_object.resolveNS(json_format=True)
                 resolveSOA = domain_object.resolveSOA(json_format=True)
+                resolvePTR = domain_object.resolvePTR(json_format=True)
+                resolveSRV = domain_object.resolveSRV(json_format=True)
+                resolveCAA = domain_object.resolveCAA(json_format=True)
             if output_directory is None:
                 os.makedirs("Output", exist_ok=True)
                 file = open(os.path.join("Output", self.date + ".txt"), "a")
             else:
                 file = open(os.path.join(output_directory, self.date + ".txt"), "a")
-            file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
+            file.write("%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n" % (
                                                         str(resolveA), 
                                                         str(resolveAAAA),
                                                         str(resolveMX), 
                                                         str(resolveTXT), 
                                                         str(resolveCNAME), 
                                                         str(resolveNS), 
-                                                        str(resolveSOA))
+                                                        str(resolveSOA),
+                                                        str(resolvePTR), 
+                                                        str(resolveSRV), 
+                                                        str(resolveCAA))
                                                         )
             file.close()
 
@@ -121,7 +139,9 @@ class Makefile(object):
                     resolveCNAME = domain_object.resolveCNAME(json_format=False)
                     resolveNS = domain_object.resolveNS(json_format=False)
                     resolveSOA = domain_object.resolveSOA(json_format=False)
-                    
+                    resolvePTR = domain_object.resolvePTR(json_format=False)
+                    resolveSRV = domain_object.resolveSRV(json_format=False)
+                    resolveCAA = domain_object.resolveCAA(json_format=False)
 
                     for result in resolveA['data']:
                         data_json = json.dumps(result)
@@ -160,6 +180,21 @@ class Makefile(object):
                                      (date_time, domain_name, record_type, resolver, status, data)
                                      VALUES (?, ?, ?, ?, ?, ?)''',
                                  (resolveSOA['date_time'], resolveSOA['domain_name'], resolveSOA['record_type'], resolveSOA['resolver'], resolveSOA['status'], resolveSOA['data']))
+                
+                    conn.execute('''INSERT INTO dns_records
+                                     (date_time, domain_name, record_type, resolver, status, data)
+                                     VALUES (?, ?, ?, ?, ?, ?)''',
+                                 (resolvePTR['date_time'], resolvePTR['domain_name'], resolvePTR['record_type'], resolvePTR['resolver'], resolvePTR['status'], resolvePTR['data']))
+                 
+                    conn.execute('''INSERT INTO dns_records
+                                     (date_time, domain_name, record_type, resolver, status, data)
+                                     VALUES (?, ?, ?, ?, ?, ?)''',
+                                 (resolveSRV['date_time'], resolveSRV['domain_name'], resolveSRV['record_type'], resolveSRV['resolver'], resolveSRV['status'], resolveSRV['data']))
+
+                    conn.execute('''INSERT INTO dns_records
+                                     (date_time, domain_name, record_type, resolver, status, data)
+                                     VALUES (?, ?, ?, ?, ?, ?)''',
+                                 (resolveCAA['date_time'], resolveCAA['domain_name'], resolveCAA['record_type'], resolveCAA['resolver'], resolveCAA['status'], resolveCAA['data']))
                 
                 conn.commit()
 
